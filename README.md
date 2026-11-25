@@ -2,6 +2,10 @@
 
 A subject-based study set. Each module teaches one technical subject end to end, so any interview question on it can be answered from understanding, not memory. None of it is written as question-and-answer.
 
+## Start here: the Speaking Kit
+
+**[00-speaking-kit](00-speaking-kit/README.md)**: short answers (4–7 sentences) to memorize and say aloud, step-by-step scripts for every diagram, keywords to recall each answer, your project stories, and a 21-day plan of about 4.5 hours a day. Use the long modules below only when you need more depth.
+
 ## How the material is organised
 
 | # | Module | Subject | File |
