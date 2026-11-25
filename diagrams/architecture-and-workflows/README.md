@@ -12,7 +12,9 @@ Mermaid diagrams render directly on GitHub. `aem-route-map.html` is a standalone
 | Section 5 | Dispatcher decision flow |
 | Section 6 | Access layers (IMS + ACL) |
 | Section 7 | Support case lifecycle |
-| Section 8 | JVM diagnosis flow |
+| Section 8 | Kubernetes request path and debug order |
+| Section 9 | Terraform change flow around AEM |
+| Section 10 | JVM diagnosis flow |
 
 ## 1. AEM as a Cloud Service architecture
 
@@ -109,7 +111,21 @@ flowchart TD
   A --> V[Customer validates] --> C[Close + KB]
 ```
 
-## 8. JVM diagnosis flow
+## 8. Kubernetes request path and debug order
+
+```mermaid
+flowchart LR
+  U[User] --> ING[Ingress<br/>host, TLS] --> SVC[Service<br/>ready endpoints] --> POD[Pod<br/>probes, limits] --> APP[Dispatcher → AEM]
+```
+
+## 9. Terraform change flow around AEM
+
+```mermaid
+flowchart LR
+  PR[PR: DNS / CDN / CIDR change] --> PL[terraform plan] --> RV[review + approval] --> AP[terraform apply] --> V[dig, curl, openssl] --> CM[Cloud Manager domain / allowlist]
+```
+
+## 10. JVM diagnosis flow
 
 ```mermaid
 flowchart TD

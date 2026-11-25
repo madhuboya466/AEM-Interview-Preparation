@@ -12,10 +12,12 @@ A subject-based study set. Each module teaches one technical subject end to end,
 | 4 | AEM Internals: Java, Sling, OSGi and JCR | How the frameworks work together inside AEM | [04-aem-internals/java-sling-osgi-jcr.md](04-aem-internals/java-sling-osgi-jcr.md) |
 | 5 | Java and JVM Performance Troubleshooting | Memory, GC, heap and thread dumps, Linux, AEM performance | [05-java-jvm-performance/jvm-troubleshooting.md](05-java-jvm-performance/jvm-troubleshooting.md) |
 | 6 | Adobe TSE: Case Management and Customer Success | Support lifecycle, SLA, escalation, communication, knowledge | [06-adobe-tse-support/support-and-sla.md](06-adobe-tse-support/support-and-sla.md) |
+| 7 | Kubernetes for AEM Engineers | Containers, Kubernetes architecture and objects, AEMaaCS through a Kubernetes lens · [full command reference](07-kubernetes/commands-reference.md) | [07-kubernetes/kubernetes-for-aem.md](07-kubernetes/kubernetes-for-aem.md) |
+| 8 | Terraform for AEM Engineers | Infrastructure as Code, state, modules, CI/CD, DNS/CDN/certificates around AEM · [full command reference](08-terraform/commands-reference.md) | [08-terraform/terraform-for-aem.md](08-terraform/terraform-for-aem.md) |
 | – | Diagrams | Mermaid diagrams + an HTML route map of AEMaaCS | [diagrams/architecture-and-workflows/](diagrams/architecture-and-workflows/) |
 | – | Quick revision | One-page recap of all six modules | [revision/quick-revision.md](revision/quick-revision.md) |
 
-Suggested order: 3 → 4 → 1 → 2 → 5 → 6. Administration and internals give the vocabulary; production support and DevOps use it; JVM and the support process are the TSE-specific layers on top.
+Suggested order: 3 → 4 → 1 → 2 → 5 → 6, then 7 → 8. Administration and internals give the vocabulary; production support and DevOps use it; JVM and the support process are the TSE-specific layers on top.
 
 ## Experience labels used in every module
 

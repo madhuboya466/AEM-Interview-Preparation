@@ -54,6 +54,22 @@
 - Communication: acknowledge, clear, specific, honest, owned, timed updates; restore first in P1.
 - Knowledge: KB with symptom words, case notes, RCA, runbooks.
 
+## 7. Kubernetes
+- Image (immutable) → container; control plane (apiserver, etcd, scheduler, controllers) + nodes (kubelet, kube-proxy, runtime); desired state + reconciliation.
+- Pod, ReplicaSet, Deployment, StatefulSet, DaemonSet, Job/CronJob, Service, Ingress, ConfigMap/Secret, PV/PVC, HPA, Namespace, RBAC.
+- Probes: startup, readiness (traffic), liveness (restart). Limits: CPU throttled, memory OOMKilled (137) ≠ Java OOM.
+- Rollouts: rolling, blue/green, canary; `kubectl rollout status|history|undo`.
+- AEMaaCS lens: image = your code + AEM release → immutable /apps; env vars restart pods; publish scales horizontally; logs collected centrally; no exec for customers.
+- Debug: `get`, `describe` (events), `logs --previous`, `get endpoints`, `top`, `port-forward`. Pending, ImagePullBackOff, CrashLoopBackOff, OOMKilled, 0/1 Ready.
+
+## 8. Terraform
+- IaC, declarative; providers, resources, data sources, state, plan (+ ~ - -/+), apply.
+- `init` → `fmt`/`validate` → `plan -out` → review → `apply plan` → verify.
+- Remote state with locking; never commit state; drift via `plan -refresh-only`; `import`, `moved`, `state mv/rm`.
+- Modules + one state per environment; `for_each` over `count` for named things; `prevent_destroy` on prod DNS.
+- Around AEMaaCS: CNAME to `cdn.adobeaemcloud.com` + TXT verification, customer CDN, certificates, CIDR lists, Jenkins/GitHub, monitoring. Cloud Manager via UI/API/aio.
+- Self-hosted AEM 6.5: VPC, security groups, VMs, load balancer, certificates, blob storage, DNS.
+
 ## Your stories (one line each, [Hands-on])
 | Story | Concept it proves |
 |-------|-------------------|
