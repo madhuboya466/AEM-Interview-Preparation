@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AEM TSE Study Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100,400;100,600;112,800&display=swap" rel="stylesheet">
+<style>
+/*
+VOICE: a calm, exact engineering handbook; the reader is studying, not being sold to.
+IDEA: a transit timetable for one HTTP request: every stop (CDN, Dispatcher, Publish, Author, Repo) is a station.
+PICTURE: the full request-and-deploy route map of AEM as a Cloud Service, drawn large at the top.
+COLOUR and TYPE: white, black, signal red for "this is yours", one grey; Archivo wide for titles, Archivo for text.
+LAYOUT: strict left edge, big hanging chapter numerals, thick top rules, tables set carefully.
+*/
+:root{color-scheme:light dark;--bg:light-dark(#fff,#0e0e0e);--ink:light-dark(#111,#ececec);--mute:light-dark(#62656b,#a2a5ab);--line:light-dark(#d9dade,#2c2d30);--soft:light-dark(#f3f3f4,#18191b);--red:light-dark(#e4002b,#ff4b62);--code:light-dark(#f5f5f6,#1b1c1f)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16.5px/1.6 Archivo,system-ui,sans-serif;overflow-x:clip}
+.band{padding:clamp(28px,4vw,64px) max(5vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+h1,h2,h3{font-family:Archivo,sans-serif;font-stretch:112%;font-weight:800;line-height:1.05;text-wrap:balance;margin:0}
+h1{font-size:clamp(34px,5vw,52px)}
+h2{font-size:clamp(26px,3.2vw,36px)}
+h3{font-size:20px;font-stretch:100%;font-weight:600;margin:28px 0 8px;line-height:1.25}
+p,li{max-width:72ch}
+a{color:inherit;text-decoration-color:var(--red);text-underline-offset:3px}
+.lede{font-size:19px;color:var(--mute);max-width:64ch;margin:14px 0 0}
+pre,.scroll{overflow-x:auto}.scroll a{flex:none}code{overflow-wrap:anywhere;font-family:ui-monospace,Consolas,monospace;font-size:.88em;background:var(--code);padding:1px 5px;border-radius:3px}
+pre{background:var(--code);padding:14px 16px;border-radius:4px;font-size:14px;line-height:1.5;margin:12px 0}
+pre code{background:none;padding:0;overflow-wrap:normal}
+html{scroll-padding-top:72px;scroll-behavior:smooth}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+.hero{border-top:10px solid var(--ink)}
+.hero .wrap{display:grid;gap:22px}
+.fig{margin:8px 0 0}
+figure{margin:24px 0}
+figure svg{width:100%;height:auto;display:block;color:var(--ink)}
+figcaption{font-size:14px;color:var(--mute);margin-top:8px;max-width:80ch}
+nav.toc{position:relative;z-index:5;background:var(--bg);border-block:1px solid var(--line);padding:10px max(5vw,16px)}
+nav.toc .scroll{display:flex;gap:6px;max-width:1240px;margin:0 auto;flex-wrap:nowrap}
+nav.toc a{padding:10px 12px;border-radius:4px;text-decoration:none;font-size:14px;white-space:nowrap;min-height:44px;display:flex;align-items:center}
+nav.toc a:hover,nav.toc a:focus-visible{background:var(--soft);outline:2px solid var(--red);outline-offset:-2px}
+@media(min-width:900px){nav.toc{position:sticky;top:0}}
+section.ch{border-top:4px solid var(--ink)}
+.chhead{display:grid;grid-template-columns:minmax(64px,120px) minmax(0,1fr);gap:16px 24px;align-items:start}
+.num{font-family:Archivo;font-stretch:112%;font-weight:800;font-size:clamp(56px,8vw,104px);line-height:.85;color:var(--red)}
+.body{grid-column:2}
+@media(max-width:700px){.chhead{grid-template-columns:1fr}.body{grid-column:1}.num{font-size:56px}}
+.legend{display:flex;flex-wrap:wrap;gap:10px 18px;font-size:14px;color:var(--mute);margin-top:4px}
+.b{display:inline-block;font-size:12.5px;font-weight:600;padding:2px 8px;border-radius:20px;vertical-align:2px;white-space:nowrap;border:1.5px solid var(--red)}
+.b.h{background:var(--red);color:#fff}
+.b.p{color:var(--red)}
+.b.t{border-color:var(--mute);color:var(--mute)}
+.you{border-left:5px solid var(--red);background:var(--soft);padding:14px 18px;margin:20px 0;border-radius:0 4px 4px 0}
+.you>strong:first-child{display:block;margin-bottom:4px}
+.honest{border-left:5px solid var(--mute);background:var(--soft);padding:14px 18px;margin:20px 0;border-radius:0 4px 4px 0}
+.honest>strong:first-child{display:block;margin-bottom:4px}
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:15px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+thead th{border-bottom:2px solid var(--ink);font-weight:600}
+td code{white-space:nowrap}
+.stackrow{display:grid;gap:4px;margin:16px 0}
+.stackrow div{padding:10px 14px;border:1.5px solid var(--ink);border-radius:3px;display:grid;grid-template-columns:minmax(130px,220px) minmax(0,1fr);gap:12px}
+.stackrow div.mine{border-color:var(--red)}
+.stackrow b{font-weight:600}
+@media(max-width:600px){.stackrow div{grid-template-columns:1fr;gap:2px}}
+.url{display:flex;flex-wrap:wrap;font-family:ui-monospace,Consolas,monospace;font-size:clamp(13px,2vw,17px);margin:18px 0 6px;gap:2px}
+.url span{padding:8px 8px 26px;border-top:4px solid var(--ink);position:relative}
+.url span i{position:absolute;left:8px;bottom:4px;font:12.5px Archivo,sans-serif;font-style:normal;color:var(--mute);white-space:nowrap}
+.url span.k{border-color:var(--red)}
+.steps{counter-reset:s;list-style:none;padding:0}
+.steps li{counter-increment:s;padding:8px 0 8px 44px;position:relative;border-bottom:1px solid var(--line)}
+.steps li::before{content:counter(s);position:absolute;left:0;top:6px;font-weight:800;font-stretch:112%;font-size:22px;color:var(--red)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));gap:18px}
+.card{border-top:3px solid var(--ink);padding-top:10px}
+.card h4{margin:0 0 6px;font-size:17px}
+.card p,.card ul{margin:0;font-size:15.5px}
+.card ul{padding-left:18px}
+.dot{display:inline-block;width:14px;height:14px;border-radius:50%;background:var(--red)}
+.dot.o{background:none;border:2px solid var(--red)}
+.mat td,.mat th{text-align:center;padding:7px 4px}
+.mat td:first-child,.mat th:first-child{text-align:left}
+.copy{font:600 14px Archivo,sans-serif;padding:10px 16px;min-height:44px;border:1.5px solid var(--ink);background:var(--bg);color:var(--ink);border-radius:4px;cursor:pointer}
+.copy:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.rev{columns:2 340px;column-gap:36px}
+.rev li{break-inside:avoid;margin-bottom:6px}
+.small{font-size:14px;color:var(--mute)}
+footer{border-top:10px solid var(--ink)}
+@media(max-width:600px){table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:8em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:7.5em;margin-inline-start:-8em;white-space:normal;font-weight:600}.stack td:empty{display:none}td code{white-space:normal}}
+</style>
+<script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script>
+</head>
+<body>
+
+<header class="band hero">
+<div class="wrap">
+<div>
+<h1>AEM as a Cloud Service: how a request travels, and how to fix it when it breaks</h1>
+<p class="lede">A study guide for the Adobe AEM Technical Support Engineer interview, built around your own enterprise AEM support work. Learn the system one stop at a time, from the CDN down to the repository, then learn to find which stop failed.</p>
+<div class="legend">
+<span><span class="b h">Your experience</span> you did this hands-on (from your task log)</span>
+<span><span class="b p">Close to your work</span> you touched it; deepen the theory</span>
+<span><span class="b t">Learn as theory</span> not in your record; discuss as knowledge, not as experience</span>
+</div>
+</div>
+<figure class="fig">
+<svg viewBox="0 0 1100 470" role="img" aria-label="AEM as a Cloud Service route map: visitors go through CDN, Dispatcher and Publish; authors work on Author, which distributes content to Preview and Publish; Cloud Manager builds code from Git and deploys to every tier.">
+<defs>
+<marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="currentColor"/></marker>
+<marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#e4002b"/></marker>
+</defs>
+<g font-family="Archivo,sans-serif" font-size="14" fill="currentColor">
+<!-- visitor line -->
+<text x="20" y="40" font-weight="700" font-size="15">Visitor route (live site)</text>
+<rect x="20" y="60" width="130" height="70" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
+<text x="85" y="92" text-anchor="middle" font-weight="600">Browser</text>
+<text x="85" y="112" text-anchor="middle" font-size="12" opacity=".7">www.site.com</text>
+<rect x="215" y="60" width="150" height="70" rx="4" fill="none" stroke="#e4002b" stroke-width="2.5"/>
+<text x="290" y="88" text-anchor="middle" font-weight="600">DNS + CDN</text>
+<text x="290" y="108" text-anchor="middle" font-size="12" opacity=".7">Fastly, SSL, IP allowlist</text>
+<rect x="430" y="60" width="160" height="70" rx="4" fill="none" stroke="#e4002b" stroke-width="2.5"/>
+<text x="510" y="88" text-anchor="middle" font-weight="600">Dispatcher</text>
+<text x="510" y="108" text-anchor="middle" font-size="12" opacity=".7">Apache: filter, cache, rewrite</text>
+<rect x="655" y="60" width="160" height="70" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
+<text x="735" y="88" text-anchor="middle" font-weight="600">Publish</text>
+<text x="735" y="108" text-anchor="middle" font-size="12" opacity=".7">renders pages (Sling)</text>
+<line x1="150" y1="95" x2="212" y2="95" stroke="currentColor" stroke-width="2" marker-end="url(#ar)"/>
+<line x1="365" y1="95" x2="427" y2="95" stroke="currentColor" stroke-width="2" marker-end="url(#ar)"/>
+<line x1="590" y1="95" x2="652" y2="95" stroke="currentColor" stroke-width="2" marker-end="url(#ar)"/>
+<text x="396" y="84" text-anchor="middle" font-size="12">miss</text>
+<text x="621" y="84" text-anchor="middle" font-size="12">miss</text>
+<!-- preview -->
+<rect x="655" y="190" width="160" height="60" rx="4" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="5 4"/>
+<text x="735" y="216" text-anchor="middle" font-weight="600">Preview</text>
+<text x="735" y="236" text-anchor="middle" font-size="12" opacity=".7">review before go-live</text>
+<!-- author -->
+<text x="890" y="40" font-weight="700" font-size="15">Author route</text>
+<rect x="890" y="60" width="190" height="70" rx="4" fill="none" stroke="#e4002b" stroke-width="2.5"/>
+<text x="985" y="88" text-anchor="middle" font-weight="600">Author</text>
+<text x="985" y="108" text-anchor="middle" font-size="12" opacity=".7">editors, workflows, DAM</text>
+<line x1="890" y1="110" x2="818" y2="110" stroke="currentColor" stroke-width="2" marker-end="url(#ar)"/>
+<path d="M940,130 L940,220 L818,220" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#ar)"/>
+<text x="852" y="150" text-anchor="middle" font-size="12">publish</text>
+<text x="952" y="180" font-size="12">publish to preview</text>
+<text x="985" y="160" text-anchor="middle" font-size="12" opacity=".7"></text>
+<!-- repo -->
+<rect x="890" y="285" width="190" height="56" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
+<text x="985" y="310" text-anchor="middle" font-weight="600">Repository (Oak / JCR)</text>
+<text x="985" y="328" text-anchor="middle" font-size="12" opacity=".7">content, users, ACLs</text>
+<line x1="985" y1="132" x2="985" y2="282" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 4"/>
+<rect x="890" y="365" width="190" height="56" rx="4" fill="none" stroke="#e4002b" stroke-width="2.5"/>
+<text x="985" y="390" text-anchor="middle" font-weight="600">Adobe IMS / Admin Console</text>
+<text x="985" y="408" text-anchor="middle" font-size="12" opacity=".7">logins, product profiles</text>
+<line x1="985" y1="365" x2="985" y2="344" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar)"/>
+<!-- deploy line -->
+<text x="20" y="300" font-weight="700" font-size="15">Deploy route (code and config)</text>
+<rect x="20" y="320" width="130" height="60" rx="4" fill="none" stroke="#e4002b" stroke-width="2.5"/>
+<text x="85" y="346" text-anchor="middle" font-weight="600">Git</text>
+<text x="85" y="365" text-anchor="middle" font-size="12" opacity=".7">your repo, Adobe repo</text>
+<rect x="215" y="320" width="150" height="60" rx="4" fill="none" stroke="#e4002b" stroke-width="2.5"/>
+<text x="290" y="346" text-anchor="middle" font-weight="600">Cloud Manager</text>
+<text x="290" y="365" text-anchor="middle" font-size="12" opacity=".7">build, scan, test</text>
+<rect x="430" y="320" width="160" height="60" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
+<text x="510" y="346" text-anchor="middle" font-weight="600">Environments</text>
+<text x="510" y="365" text-anchor="middle" font-size="12" opacity=".7">dev, stage, prod, RDE</text>
+<line x1="150" y1="350" x2="212" y2="350" stroke="currentColor" stroke-width="2" marker-end="url(#ar)"/>
+<line x1="365" y1="350" x2="427" y2="350" stroke="currentColor" stroke-width="2" marker-end="url(#ar)"/>
+<path d="M590,350 L630,350 L630,160 L1010,160 L1010,136" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#ar)"/>
+<path d="M630,160 L630,145" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="6 4"/>
+<line x1="510" y1="320" x2="510" y2="134" stroke="currentColor" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#ar)"/>
+<text x="520" y="290" font-size="12">dispatcher config</text>
+<text x="640" y="300" font-size="12">code packages to Author, Publish, Preview</text>
+<!-- red = your work -->
+<rect x="20" y="430" width="18" height="12" fill="none" stroke="#e4002b" stroke-width="2.5"/>
+<text x="46" y="441" font-size="13">red outline: a stop you have worked on directly in your task log</text>
+</g>
+</svg>
+<figcaption>The whole subject on one map. Every interview problem lives at one of these stops. Your task log already touches CDN, Dispatcher, Author, IMS, Git and Cloud Manager; the remaining stops are where to deepen theory.</figcaption>
+</figure>
+</div>
+</header>
+
+<nav class="toc" aria-label="Chapters"><div class="scroll">
+<a href="#role">1 The TSE role</a><a href="#arch">2 Architecture</a><a href="#repo">3 Repository</a><a href="#sling">4 Sling and OSGi</a><a href="#dispatcher">5 Dispatcher</a><a href="#cdn">6 CDN and domains</a><a href="#publishing">7 Publishing</a><a href="#security">8 Users and access</a><a href="#workflow">9 Workflows</a><a href="#cicd">10 Cloud Manager</a><a href="#migration">11 Migration</a><a href="#code">12 Components and forms</a><a href="#logs">13 Logs</a><a href="#http">14 HTTP errors</a><a href="#perf">15 Performance</a><a href="#method">16 Method</a><a href="#summary">Summary</a><a href="#revision">Revision sheet</a>
+</div></nav>
+
+<main>
+
+<!-- 1 -->
+<section class="ch band" id="role"><div class="wrap chhead"><div class="num">1</div><div class="body">
+<h2>What a Technical Support Engineer actually does</h2>
+<p>A developer builds features. A platform engineer keeps environments running. A TSE sits between the customer and Adobe engineering: a customer opens a case saying "something is broken", and the TSE must work out <em>which layer</em> is broken, <em>why</em>, and <em>what the customer or Adobe must change</em>. The job is mostly diagnosis and communication, with some configuration and code reading.</p>
+<table class="stack">
+<thead><tr><th>Part of the job</th><th>What it means</th><th>Your matching experience</th></tr></thead>
+<tbody>
+<tr><td>Intake and scoping</td><td>Read the case, find the environment, the URL, when it started, who is affected, what changed recently.</td><td>Your production tickets: regional authors with 403, a regional team with 503, images 404 on the live site. <span class="b h">Your experience</span></td></tr>
+<tr><td>Reproduce</td><td>Try the same request; in theory also reproduce on a local AEM SDK.</td><td>You checked the page in author and in publisher directly. <span class="b h">Your experience</span> Local SDK reproduction: <span class="b t">Learn as theory</span> unless you used it</td></tr>
+<tr><td>Isolate the layer</td><td>CDN, Dispatcher, Publish, Author, repository, code, or customer network?</td><td>Image 404: you proved the image existed on author and publish, so the fault had to be in front of Publish (Dispatcher). <span class="b h">Your experience</span></td></tr>
+<tr><td>Gather evidence</td><td>Logs, response headers, configs, Cloud Manager pipeline output.</td><td>You read ingestion logs, request logs and pipeline runs. <span class="b h">Your experience</span></td></tr>
+<tr><td>Fix or advise</td><td>Customer-side fix (config, content, code) or escalate to Adobe engineering for a platform defect.</td><td>You fixed things yourself. At Adobe you will often <em>advise</em> the customer to make the change, since you do not own their code. <span class="b p">Close to your work</span></td></tr>
+<tr><td>Root cause and prevention</td><td>Write what happened, why, the fix, and how to stop it happening again.</td><td>You did this: peer review for the CSV path list, container guidance for authors, monthly token refresh. <span class="b h">Your experience</span></td></tr>
+<tr><td>Case handling process</td><td>Priority levels (P1 site down to P4 question), response times, escalation to engineering, knowledge-base articles.</td><td><span class="b t">Learn as theory</span>: Adobe's internal tooling and SLAs; read Adobe's public support-policy pages.</td></tr>
+</tbody></table>
+<div class="you"><strong>Your strongest angle</strong>You were the customer side of this relationship. You raised and solved incidents on a real AEMaaCS program (an enterprise multi-site platform), so you know what customers see, what they misunderstand and what evidence they can provide. Say that plainly; it is an advantage.</div>
+</div></div></section>
+
+<!-- 2 -->
+<section class="ch band" id="arch"><div class="wrap chhead"><div class="num">2</div><div class="body">
+<h2>Architecture: the stops on the route</h2>
+<p>AEM as a Cloud Service (AEMaaCS) is AEM run by Adobe on Kubernetes. You never log into a server. Each environment (dev, stage, prod, RDE) has several <strong>services</strong> (also called tiers):</p>
+<table class="stack">
+<thead><tr><th>Tier</th><th>Who uses it</th><th>Key facts</th></tr></thead>
+<tbody>
+<tr><td>Author</td><td>Content authors, approvers, admins</td><td>Where content is created, workflows run, assets are processed. Runs as a cluster of pods sharing one repository (document store). Behind login (Adobe IMS).</td></tr>
+<tr><td>Publish</td><td>Website visitors</td><td>Several pods, each with its own copy of published content. Read-mostly. Each pod has Apache + Dispatcher in front of it.</td></tr>
+<tr><td>Preview</td><td>Business reviewers</td><td>A separate publish-like tier. Content is published to Preview first for review, without going live. Your "preview to publish" workflow used this. <span class="b h">Your experience</span></td></tr>
+<tr><td>Dispatcher</td><td>Sits in front of Publish/Preview</td><td>Apache module: allows or blocks requests (filters), caches responses, rewrites URLs. You deploy its config from Git.</td></tr>
+<tr><td>CDN</td><td>All public traffic</td><td>Adobe-managed CDN (Fastly). Terminates SSL, caches, applies IP allowlists and traffic rules, serves custom domains.</td></tr>
+<tr><td>Cloud Manager</td><td>Developers, DevOps</td><td>Self-service portal + CI/CD: pipelines, environments, domains, SSL certificates, IP allowlists, logs, environment variables.</td></tr>
+</tbody></table>
+
+<h3>The software stack inside one AEM instance</h3>
+<p>Every AEM instance (author or publish) is the same layered Java application. Knowing the layers tells you which kind of log line or error belongs to which part.</p>
+<div class="stackrow">
+<div class="mine"><b>Your code</b><span>Components (HTL), Sling Models (Java), client libraries, OSGi configs, Repoinit scripts, dispatcher config.</span></div>
+<div><b>AEM applications</b><span>Sites (WCM), Assets (DAM), Workflow, Forms, Replication / Content Distribution.</span></div>
+<div><b>Apache Sling</b><span>Web framework: turns a URL into a resource in the repository and picks a script to render it.</span></div>
+<div><b>OSGi (Apache Felix)</b><span>Module system: bundles, services, configurations, start/stop at runtime.</span></div>
+<div><b>JCR / Apache Oak</b><span>The content repository: a tree of nodes and properties, with versioning, access control, indexes and search.</span></div>
+<div><b>Java (JVM)</b><span>Memory, threads, garbage collection. Heap and thread dumps are taken at this level.</span></div>
+</div>
+
+<h3>What changed from on-premise AEM 6.5 to the cloud</h3>
+<table class="stack">
+<thead><tr><th>Topic</th><th>AEM 6.5 (on-prem / AMS)</th><th>AEM as a Cloud Service</th></tr></thead>
+<tbody>
+<tr><td>Servers</td><td>Fixed servers you patch and restart</td><td>Containers Adobe scales, restarts and updates automatically</td></tr>
+<tr><td>Updates</td><td>Service packs installed by the team</td><td>Continuous Adobe releases, applied through the pipeline</td></tr>
+<tr><td>Code in repository</td><td><code>/apps</code> writable at runtime</td><td><code>/apps</code> and <code>/libs</code> are immutable at runtime; only a pipeline can change them</td></tr>
+<tr><td>Replication</td><td>Replication agents, flush agents, queues you manage</td><td>Sling Content Distribution through an Adobe pipeline; dispatcher invalidation is automatic</td></tr>
+<tr><td>Admin consoles</td><td>Felix console (<code>/system/console</code>), CRXDE on all tiers</td><td>No Felix console on cloud tiers; use the <strong>Developer Console</strong>; CRXDE Lite only on dev author</td></tr>
+<tr><td>Users</td><td>Local users, LDAP, SAML</td><td>Adobe IMS login; users and groups come from Admin Console product profiles</td></tr>
+<tr><td>Deployment</td><td>Jenkins/Maven installing packages via Package Manager</td><td>Only Cloud Manager pipelines (plus the aio CLI for RDEs)</td></tr>
+</tbody></table>
+<div class="honest"><strong>Honest framing</strong>Your Jenkins and Maven experience maps to the on-prem column. Your Cloud Manager, dispatcher and migration work maps to the cloud column. If asked about Felix console or replication agents on 6.5, explain them as concepts you know, and say your recent hands-on work is on AEMaaCS, unless you really administered 6.5 servers.</div>
+</div></div></section>
+
+<!-- 3 -->
+<section class="ch band" id="repo"><div class="wrap chhead"><div class="num">3</div><div class="body">
+<h2>The repository: JCR, Oak, and where everything lives</h2>
+<p>Everything in AEM is stored as a <strong>tree of nodes</strong>. A node has a name, a type (<code>jcr:primaryType</code>, such as <code>cq:Page</code>, <code>dam:Asset</code>, <code>nt:unstructured</code>) and properties. A page is a <code>cq:Page</code> node with a <code>jcr:content</code> child that holds its components. <strong>JCR</strong> is the standard (Java Content Repository API); <strong>Oak</strong> is Adobe's/Apache's implementation of it.</p>
+<table class="stack">
+<thead><tr><th>Path</th><th>Holds</th><th>Mutable in cloud?</th></tr></thead>
+<tbody>
+<tr><td><code>/libs</code></td><td>Adobe product code. Never edit.</td><td>No</td></tr>
+<tr><td><code>/apps</code></td><td>Your project code: components, overlays, OSGi configs</td><td>No (pipeline only)</td></tr>
+<tr><td><code>/conf</code></td><td>Editable templates, policies, workflow models, Cloud configurations</td><td>Yes</td></tr>
+<tr><td><code>/content</code></td><td>Pages (<code>/content/&lt;site&gt;</code>), assets (<code>/content/dam</code>), experience fragments, forms</td><td>Yes</td></tr>
+<tr><td><code>/var</code></td><td>Runtime data: workflow instances and runtime models (<code>/var/workflow</code>), audit logs</td><td>Yes</td></tr>
+<tr><td><code>/home</code></td><td>Users and groups (<code>/home/users</code>, <code>/home/groups</code>)</td><td>Yes</td></tr>
+<tr><td><code>/oak:index</code></td><td>Search index definitions</td><td>Via pipeline only</td></tr>
+</tbody></table>
+
+<h3>Storage: two kinds of node store <span class="b t">Learn as theory</span></h3>
+<ul>
+<li><strong>Segment store (TarMK)</strong>: files on local disk; fast; single instance. Used by each publish pod in the cloud (and by most on-prem installs). Needs "online revision cleanup" (compaction) on-prem.</li>
+<li><strong>Document store (MongoMK)</strong>: nodes stored in a database, so several author pods can share one repository. Used by cloud Author.</li>
+<li><strong>Binaries</strong> (images, PDFs) live in a separate blob store (cloud object storage), not inside the node tree.</li>
+</ul>
+
+<h3>Mutable vs immutable content packages</h3>
+<p>A cloud project builds separate packages: <code>ui.apps</code> (immutable code to <code>/apps</code>), <code>ui.config</code> (OSGi configs and Repoinit), <code>ui.content</code> (mutable starter content to <code>/conf</code>, <code>/content</code>). Putting mutable content in the immutable package, or the reverse, makes the build or deploy fail. This is a common customer case.</p>
+
+<h3>Repoinit: creating repository structure as code</h3>
+<p>Because you cannot click to create service users, paths or namespaces on a cloud tier, you declare them in a <strong>Repoinit</strong> script, deployed as an OSGi config (<code>org.apache.sling.jcr.repoinit.RepositoryInitializer~name.cfg.json</code>). It runs on every start and is idempotent (safe to re-run).</p>
+<pre><code>register namespace (mysite) http://example.com/mysite/1.0
+create service user mysite-content-reader
+create path /conf/mysite(sling:Folder)
+set ACL for mysite-content-reader
+    allow jcr:read on /content/mysite
+end</code></pre>
+<p class="small">Illustrative script; names are examples, not your project's real values.</p>
+<div class="you"><strong>Your experience: namespace issues across RDE, QA, STAGE, PROD</strong>During on-prem to cloud migration, content used a namespace that did not exist on the cloud repository. A node property such as <code>mysite:something</code> fails to save if the <code>mysite</code> prefix is not registered. You fixed it by registering the namespace through Repoinit, so every environment got it from code. Connect it to the concept: <em>in the cloud, repository structure is code, and every environment must get it from the same pipeline</em>.</div>
+</div></div></section>
+
+<!-- 4 -->
+<section class="ch band" id="sling"><div class="wrap chhead"><div class="num">4</div><div class="body">
+<h2>Sling and OSGi: how a URL becomes a page</h2>
+<p>Sling does not map URLs to Java classes. It maps a URL to a <strong>resource</strong> (a node), then reads the node's <code>sling:resourceType</code> to find the <strong>script</strong> (HTL) that renders it. Learn to split any AEM URL into its parts:</p>
+<div class="url" aria-label="URL decomposition">
+<span>/content/mysite/xx/en/contact<i>resource path</i></span><span class="k">.teaser.mobile<i>selectors</i></span><span class="k">.html<i>extension</i></span><span>/extra/info<i>suffix</i></span><span>?q=1<i>query (ignored by cache)</i></span>
+</div>
+<ol class="steps">
+<li><strong>Resource resolution</strong>: Sling finds the longest path that exists as a node, applying mappings (<code>/etc/map</code>, resource resolver factory config) that shorten or rewrite paths.</li>
+<li><strong>Read the resource type</strong>: e.g. <code>mysite/components/page</code>. If no script is found, Sling follows <code>sling:resourceSuperType</code> (inheritance), e.g. to <code>core/wcm/components/page/v3/page</code>.</li>
+<li><strong>Script selection</strong>: picks the most specific script matching selectors, extension and HTTP method (<code>teaser.mobile.html</code> beats <code>html</code>).</li>
+<li><strong>Render</strong>: the HTL script calls Sling Models (Java) for data, includes child components, outputs HTML.</li>
+<li><strong>Filters and response</strong>: Sling filters run around the request (authentication, caching headers, custom filters).</li>
+</ol>
+<p>Why this matters for support: a 404 from AEM itself means "no resource at that path" (or no read permission, since unreadable looks like missing). A 500 usually means the script or Sling Model threw an exception (see <code>error.log</code>). Wrong extension or missing <code>.html</code> often hits a different script or a filter rule.</p>
+<div class="you"><strong>Your experience: preview links not navigating correctly</strong>Links on a page in the cloud preview environment went to the wrong place because the URL had no <code>.html</code> extension. You added a dispatcher rewrite rule to append <code>.html</code> for the site's content paths. The concept: Sling needs the extension to choose the HTML rendering, and the dispatcher's rewrites run <em>before</em> the request reaches Sling, so they are the right place for URL shaping on publish/preview.</div>
+
+<h3>OSGi in one minute</h3>
+<ul>
+<li><strong>Bundle</strong>: a JAR with metadata; states installed, resolved, active. A bundle stuck in "installed" means a missing dependency (an import no other bundle exports).</li>
+<li><strong>Component / service</strong>: a Java class managed by OSGi (<code>@Component</code>), can offer a service and depend on others (<code>@Reference</code>). If a required reference is missing, the component is "unsatisfied" and its feature silently does nothing.</li>
+<li><strong>Configuration</strong>: values for a component, stored as <code>.cfg.json</code> files in <code>/apps/&lt;project&gt;/osgiconfig/config.&lt;runmode&gt;</code>.</li>
+<li><strong>Run modes</strong>: pick configs per tier and environment: <code>config.author</code>, <code>config.publish</code>, <code>config.author.prod</code>, <code>config.stage</code>, <code>config.dev</code>.</li>
+<li><strong>Environment variables and secrets</strong>: in the cloud, put environment-specific values in Cloud Manager and reference them: <code>"$[env:SMTP_HOST;default=localhost]"</code>, <code>"$[secret:SMTP_PASSWORD]"</code>. Secrets never go in Git.</li>
+<li><strong>Where to check in the cloud</strong>: Developer Console (from Cloud Manager) shows bundle status, components, configurations, and lets you run query explain. <span class="b t">Learn as theory</span> if you have not opened it.</li>
+</ul>
+<div class="you"><strong>Your experience: the SMTP token that expired</strong>Emails stopped because the token AEM used to authenticate with the mail server expired after about 90 days of inactivity. You logged in as the mail service account, generated a new token, updated AEM's mail configuration, and asked the team to refresh it monthly. The concepts underneath: the <strong>Day CQ Mail Service</strong> OSGi config sends email; modern providers (for example Microsoft 365) require <strong>OAuth2</strong> instead of a password, which uses an access token plus a <strong>refresh token</strong>, and Microsoft's refresh tokens expire after a period of inactivity (90 days by default). A durable fix stores the value as a Cloud Manager <em>secret</em> variable, so rotating it does not need a code change. Confirm for yourself which provider and which config your project used before describing it in detail.</div>
+<div class="honest"><strong>Theory to add: outbound email from the cloud</strong>AEMaaCS blocks outbound traffic on non-HTTP ports by default. To send SMTP, a program enables <strong>advanced networking</strong> (flexible port egress or dedicated egress IP) and configures port forwarding; the mail config then uses the proxy host Adobe provides (<code>AEM_PROXY_HOST</code>). "Email stopped working" cases usually come down to: networking config, credentials/token expiry, the OSGi mail config, or the mail server rejecting the sender.</div>
+</div></div></section>
+
+<!-- 5 -->
+<section class="ch band" id="dispatcher"><div class="wrap chhead"><div class="num">5</div><div class="body">
+<h2>Dispatcher: the gatekeeper and the cache</h2>
+<p>Dispatcher is an Apache HTTP Server module. It has three jobs: <strong>security</strong> (only allow URLs you expect), <strong>caching</strong> (save rendered pages as files so Publish does less work) and <strong>URL handling</strong> (rewrites, redirects, virtual hosts for multiple domains).</p>
+<figure>
+<svg viewBox="0 0 1000 330" role="img" aria-label="Dispatcher decision flow: a request passes vhost and rewrite, then the filter; denied requests get 404; allowed requests are served from cache if present and fresh, otherwise fetched from Publish and cached if cacheable.">
+<defs><marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="currentColor"/></marker></defs>
+<g font-family="Archivo,sans-serif" font-size="14" fill="currentColor">
+<rect x="10" y="40" width="130" height="60" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><text x="75" y="67" text-anchor="middle" font-weight="600">Request</text><text x="75" y="86" text-anchor="middle" font-size="12">from CDN</text>
+<rect x="185" y="40" width="150" height="60" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><text x="260" y="67" text-anchor="middle" font-weight="600">Virtual host</text><text x="260" y="86" text-anchor="middle" font-size="12">+ rewrite rules</text>
+<rect x="380" y="40" width="150" height="60" rx="4" fill="none" stroke="#e4002b" stroke-width="2.5"/><text x="455" y="67" text-anchor="middle" font-weight="600">Filter</text><text x="455" y="86" text-anchor="middle" font-size="12">allow / deny rules</text>
+<rect x="575" y="40" width="150" height="60" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><text x="650" y="67" text-anchor="middle" font-weight="600">In cache and fresh?</text><text x="650" y="86" text-anchor="middle" font-size="12">compare with .stat</text>
+<rect x="800" y="40" width="180" height="60" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><text x="890" y="67" text-anchor="middle" font-weight="600">Serve cached file</text><text x="890" y="86" text-anchor="middle" font-size="12">Publish not touched</text>
+<line x1="140" y1="70" x2="182" y2="70" stroke="currentColor" stroke-width="2" marker-end="url(#a2)"/>
+<line x1="335" y1="70" x2="377" y2="70" stroke="currentColor" stroke-width="2" marker-end="url(#a2)"/>
+<line x1="530" y1="70" x2="572" y2="70" stroke="currentColor" stroke-width="2" marker-end="url(#a2)"/><text x="551" y="60" text-anchor="middle" font-size="12">allowed</text>
+<line x1="725" y1="70" x2="797" y2="70" stroke="currentColor" stroke-width="2" marker-end="url(#a2)"/><text x="761" y="60" text-anchor="middle" font-size="12">yes</text>
+<line x1="455" y1="100" x2="455" y2="187" stroke="#e4002b" stroke-width="2" marker-end="url(#a2)"/><text x="465" y="150" font-size="12">denied</text>
+<rect x="380" y="190" width="150" height="56" rx="4" fill="none" stroke="#e4002b" stroke-width="2.5"/><text x="455" y="214" text-anchor="middle" font-weight="600">404 Not Found</text><text x="455" y="233" text-anchor="middle" font-size="12">Publish never sees it</text>
+<line x1="650" y1="100" x2="650" y2="187" stroke="currentColor" stroke-width="2" marker-end="url(#a2)"/><text x="660" y="150" font-size="12">no</text>
+<rect x="575" y="190" width="150" height="56" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><text x="650" y="214" text-anchor="middle" font-weight="600">Ask Publish</text><text x="650" y="233" text-anchor="middle" font-size="12">render the page</text>
+<line x1="725" y1="218" x2="797" y2="218" stroke="currentColor" stroke-width="2" marker-end="url(#a2)"/>
+<rect x="800" y="190" width="180" height="56" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><text x="890" y="214" text-anchor="middle" font-weight="600">Cache if allowed</text><text x="890" y="233" text-anchor="middle" font-size="12">/cache /rules, then return</text>
+<text x="10" y="300" font-size="13">Not cached: requests with a query string, no extension, Authorization header, or rules that deny caching.</text>
+</g></svg>
+<figcaption>A filter denial looks like a 404, not a 403. That single fact explains your .JPG case.</figcaption>
+</figure>
+
+<h3>The configuration files you need to recognise</h3>
+<table class="stack">
+<thead><tr><th>File / section</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td><code>conf.d/available_vhosts/*.vhost</code></td><td>Apache virtual hosts: which domain names (<code>ServerName</code>/<code>ServerAlias</code>) this config answers. Domain mapping across environments starts here.</td></tr>
+<tr><td><code>conf.d/rewrites/*.rules</code></td><td>mod_rewrite: redirects (301/302), short URLs, appending <code>.html</code>, vanity paths.</td></tr>
+<tr><td><code>conf.dispatcher.d/filters/*.any</code></td><td><code>/filter</code>: allow/deny by method, path, selectors, extension, suffix. Start from deny-all, then allow.</td></tr>
+<tr><td><code>conf.dispatcher.d/cache/*.any</code></td><td><code>/cache /rules</code> (what to cache), <code>/invalidate</code> (which files become stale on publish), <code>/ignoreUrlParams</code>.</td></tr>
+<tr><td><code>conf.dispatcher.d/clientheaders</code></td><td>Which request headers are passed to Publish.</td></tr>
+<tr><td><code>conf.dispatcher.d/farms</code></td><td>A farm ties vhosts, filters, cache and renders (the Publish backend) together.</td></tr>
+<tr><td><code>statfileslevel</code></td><td>How deep <code>.stat</code> files go. On publish, files under that folder become stale ("invalidated"), so the next request fetches a fresh copy.</td></tr>
+</tbody></table>
+
+<h3>Filter rule anatomy</h3>
+<pre><code>/0100 { /type "allow" /path "/content/mysite/*" /extension '(html|json|css|js|png|jpg|jpeg|gif|svg|pdf)' }
+/0101 { /type "deny"  /selectors '(feed|rss|infinity|tidy|sysview|docview|query|[0-9-]+)' }</code></pre>
+<p>Regex in single quotes is <strong>case-sensitive</strong>. <code>jpg</code> does not match <code>JPG</code>. Later rules override earlier ones, so order matters.</p>
+<div class="you"><strong>Your experience: images and .xlsx giving 404 on the live site</strong>You confirmed the image existed in author and directly on publish, so the content was fine. The images had an uppercase <code>.JPG</code> extension, which the filter's extension list did not allow, so dispatcher denied them and returned 404. You allowed it in the filter, and later did the same for a reported <code>.xlsx</code> case. This is a model troubleshooting story: <em>prove which layer has the problem before changing anything</em>. A cleaner long-term fix is a case-insensitive pattern such as <code>'(?i)(jpg|jpeg|png)'</code> if your dispatcher version supports it, or listing both cases.</div>
+<div class="you"><strong>Your experience: dispatcher domain mapping across RDE / QA / STAGE / PROD</strong>Each environment answers different host names, so vhosts and rewrite rules must map each domain to the right content root (for example <code>www.site.com</code> to <code>/content/mysite/xx</code>). Environment-specific host names are usually handled with variables (for example <code>${ENVIRONMENT_TYPE}</code> or custom variables in <code>conf.d/variables</code>) so one config works in all environments.</div>
+<h3>Cloud-specific dispatcher facts <span class="b p">Close to your work</span></h3>
+<ul>
+<li>The config lives in the project's <code>dispatcher</code> Maven module and is deployed by a full-stack or web-tier config pipeline.</li>
+<li>Some files are <strong>immutable</strong> (provided by Adobe); you can only add your own includes. The build runs a <strong>validator</strong> that fails the pipeline on forbidden directives.</li>
+<li>Test locally with the Dispatcher SDK (Docker) and <code>validate.sh</code> before pushing. <span class="b t">Learn as theory</span> if you have not used it.</li>
+<li>Invalidation happens automatically when content is published; you do not configure flush agents in the cloud.</li>
+</ul>
+</div></div></section>
+
+<!-- 6 -->
+<section class="ch band" id="cdn"><div class="wrap chhead"><div class="num">6</div><div class="body">
+<h2>CDN, domains, SSL and network access</h2>
+<p>Every AEMaaCS environment comes with an Adobe-managed CDN. Requests to the live site arrive there first. To understand most "site not reachable" cases you need four ideas: DNS, SSL certificates, caching and IP-based access.</p>
+<h3>Going live with a custom domain</h3>
+<ol class="steps">
+<li><strong>Add the SSL certificate</strong> in Cloud Manager (customer-managed certificate, or an Adobe-managed DV certificate). The certificate must cover the domain name, including <code>www</code> if used.</li>
+<li><strong>Add the domain name</strong> in Cloud Manager and verify ownership (a TXT record).</li>
+<li><strong>Map the domain</strong> to the environment and tier (publish or preview).</li>
+<li><strong>Point DNS</strong>: the customer's network team creates a CNAME record to Adobe's CDN host (<code>cdn.adobeaemcloud.com</code>); apex domains use A records Adobe documents.</li>
+<li><strong>Dispatcher</strong>: the vhost must answer that host name, and rewrites must map it to the right content root.</li>
+</ol>
+<div class="you"><strong>Your experience</strong>You updated SSL certificates in Cloud Manager, worked with the network team to update internal and external DNS records to point at Adobe's CDN, configured domain mapping in Cloud Manager, and set up matching dispatcher config. That is the full go-live chain above; you can explain each step from experience.</div>
+<h3>IP allowlists and CIDR</h3>
+<p>Cloud Manager can restrict an environment's tier (author, publish, preview) to listed IP ranges. Ranges are written in <strong>CIDR</strong> notation: <code>203.0.113.0/24</code> means the first 24 bits are fixed, so 256 addresses (203.0.113.0 to .255). <code>/32</code> is one address. A request from an address outside the list is blocked at the CDN with <strong>403</strong>, before AEM is involved.</p>
+<div class="you"><strong>Your experience: authors in one region getting 403 on prod author</strong>You first checked their AEM access (fine), checked the users had migrated to the cloud, then found in the logs that their requests came from IP addresses outside the allowlist. You got the office's CIDR range, added it to the Cloud Manager IP allowlist and had the users verify. Lesson for the interview: <em>a 403 for one group of users, while others are fine, points to something that differs between them: permissions or network location</em>. You checked both.</div>
+<h3>CDN caching <span class="b p">Close to your work</span></h3>
+<ul>
+<li>The CDN obeys <code>Cache-Control</code> and <code>Surrogate-Control</code> headers set by AEM or dispatcher. If none are set, Adobe applies a short default TTL for HTML/JSON (a few minutes).</li>
+<li>So after a publish, the dispatcher copy is invalidated immediately, but the CDN may keep the old page until its TTL ends. "I published but the site still shows old content" is often this.</li>
+<li>Read headers with <code>curl -I https://www.site.com/page.html</code>: look at <code>Age</code>, <code>Cache-Control</code>, <code>X-Cache</code> (HIT/MISS).</li>
+<li>Purge: possible via the CDN purge API with a purge key configured through the config pipeline. <span class="b t">Learn as theory</span></li>
+</ul>
+<h3>Newer CDN features <span class="b t">Learn as theory</span></h3>
+<ul>
+<li><strong>Config pipeline</strong> with a <code>cdn.yaml</code>: traffic filter rules (block paths, countries, rate limits), WAF rules, request/response transformations, redirects at the edge, origin selectors.</li>
+<li><strong>Customer-managed CDN</strong> (BYOCDN) in front of Adobe's: the customer's CDN must send the expected host header and a secret header (<code>X-AEM-Edge-Key</code>), otherwise Adobe's CDN rejects or misroutes the request.</li>
+<li><strong>Log forwarding</strong> of CDN and AEM logs to Splunk, Datadog and similar.</li>
+</ul>
+</div></div></section>
+
+<!-- 7 -->
+<section class="ch band" id="publishing"><div class="wrap chhead"><div class="num">7</div><div class="body">
+<h2>Publishing content: from Author to Preview and Publish</h2>
+<p>Publishing (also called activation or replication) copies a page or asset from Author to Publish. In the cloud this uses <strong>Sling Content Distribution</strong>: Author packages the content and sends it to an Adobe pipeline service; every publish pod picks it up and imports it. Dispatcher caches are invalidated automatically.</p>
+<table class="stack">
+<thead><tr><th>Way to publish</th><th>What it does</th></tr></thead>
+<tbody>
+<tr><td>Quick Publish</td><td>Publishes the selected page(s) and their references (images, XFs) to Publish.</td></tr>
+<tr><td>Manage Publication</td><td>Choose destination (Publish or Preview), include child pages, schedule later, or start a workflow (e.g. approval).</td></tr>
+<tr><td>Tree Activation / publish content tree</td><td>Publishes a whole branch; used after migrations. Large trees should go through the workflow step, not the UI.</td></tr>
+<tr><td>Workflow step</td><td>A workflow can publish as one of its steps, after approval.</td></tr>
+<tr><td>Unpublish</td><td>Removes from Publish; dispatcher invalidates.</td></tr>
+</tbody></table>
+<div class="you"><strong>Your experience: preview-to-publish workflow</strong>You built a workflow in the cloud where business users can publish content to the Preview tier for review without the approval step that goes before Publish. This shows you understand Preview as a separate tier and how workflows drive publication.</div>
+<h3>When publishing fails: what to check</h3>
+<ul>
+<li>Status column in Sites console and the page's publish status; the <strong>Distribution</strong> page (Tools → Deployment → Distribution) shows the agent queue on Author and lets you see blocked items. <span class="b p">Close to your work</span></li>
+<li>A blocked queue item (for example a node with a bad property, a missing namespace, a huge package) stops everything behind it.</li>
+<li><code>error.log</code> on author for distribution errors; on publish for import errors.</li>
+<li>Permission: the user needs <code>replicate</code> privilege on the path.</li>
+<li>Content appears on Publish but not on the site: then it is a cache issue (dispatcher or CDN), not publication.</li>
+</ul>
+<div class="honest"><strong>On-prem theory</strong>AEM 6.5 used replication agents (<code>/etc/replication/agents.author</code>) that you configure with a transport URL and user, plus dispatcher flush agents on publish. Queues could block; you would check the agent log, test connection, clear the item. Know this as background; AMS customers and older cases still mention it.</div>
+</div></div></section>
+
+<!-- 8 -->
+<section class="ch band" id="security"><div class="wrap chhead"><div class="num">8</div><div class="body">
+<h2>Users, groups and permissions</h2>
+<p>Access in AEMaaCS has two layers. Mixing them up is the most common reason people misdiagnose a 403.</p>
+<figure>
+<svg viewBox="0 0 1000 220" role="img" aria-label="Two layers of access: Adobe Admin Console decides who can log in to which environment through product profiles; AEM groups and ACLs decide what a logged-in user can do on which paths.">
+<defs><marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="currentColor"/></marker></defs>
+<g font-family="Archivo,sans-serif" font-size="14" fill="currentColor">
+<rect x="10" y="30" width="300" height="150" rx="4" fill="none" stroke="#e4002b" stroke-width="2.5"/>
+<text x="30" y="58" font-weight="700">Layer 1: Admin Console (IMS)</text>
+<text x="30" y="86">Can this person log in at all?</text>
+<text x="30" y="110" font-size="13">User added to a product profile:</text>
+<text x="30" y="130" font-size="13">AEM Users / AEM Administrators</text>
+<text x="30" y="150" font-size="13">per environment and tier</text>
+<line x1="310" y1="105" x2="380" y2="105" stroke="currentColor" stroke-width="2" marker-end="url(#a3)"/>
+<text x="345" y="95" text-anchor="middle" font-size="12">login syncs</text>
+<rect x="385" y="30" width="270" height="150" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
+<text x="405" y="58" font-weight="700">AEM user and groups</text>
+<text x="405" y="86">Created on first login</text>
+<text x="405" y="110" font-size="13">IMS groups appear as AEM groups;</text>
+<text x="405" y="130" font-size="13">add them to your own AEM groups</text>
+<line x1="655" y1="105" x2="725" y2="105" stroke="currentColor" stroke-width="2" marker-end="url(#a3)"/>
+<rect x="730" y="30" width="260" height="150" rx="4" fill="none" stroke="#e4002b" stroke-width="2.5"/>
+<text x="750" y="58" font-weight="700">Layer 2: AEM ACLs</text>
+<text x="750" y="86">What can they do, where?</text>
+<text x="750" y="110" font-size="13">read, modify, create, delete,</text>
+<text x="750" y="130" font-size="13">replicate, read/edit ACL</text>
+<text x="750" y="150" font-size="13">on /content/mysite/xx ...</text>
+</g></svg>
+<figcaption>Fails at layer 1: the user cannot reach AEM or gets an IMS error. Fails at layer 2: the user logs in but sees missing pages, greyed-out buttons or 403 on an action.</figcaption>
+</figure>
+<h3>How AEM decides a permission</h3>
+<ul>
+<li>A permission is an <strong>access control entry (ACE)</strong>: principal (user or group) + allow/deny + privileges + path, stored in a <code>rep:policy</code> node.</li>
+<li>Entries <strong>inherit</strong> down the tree. An entry on a deeper path overrides the parent's for that subtree.</li>
+<li>At the same node, entries for the <strong>user</strong> take precedence over entries for groups; among groups, the order in the list matters.</li>
+<li><code>everyone</code> has read on many product paths; a deny for <code>everyone</code> affects all users, so be careful.</li>
+<li>Best practice: grant to <strong>groups</strong>, never to individual users; keep a group per role and site (e.g. <code>mysite-xx-authors</code>, <code>mysite-xx-approvers</code>).</li>
+<li>Tools: Tools → Security → Permissions (view effective permissions, test a privilege for a user on a path); Groups; Users. In code: Repoinit <code>set ACL</code>.</li>
+<li><strong>Closed User Groups (CUG)</strong> restrict who can see pages on Publish (login-protected areas). <span class="b t">Learn as theory</span></li>
+<li><strong>Service users</strong>: technical users for code (via <code>ServiceUserMapper</code> config), never admin sessions. Created with Repoinit. <span class="b p">Close to your work</span></li>
+</ul>
+<div class="you"><strong>Your experience: country authors and approvers</strong>You created users and groups for country-specific authors and approvers for all the platform's sites, through Cloud Manager / Admin Console and AEM groups. Explain the model you used: product profile for login, then site- and role-specific AEM groups with ACLs on each country's content tree, approvers being the members of a workflow participant group.</div>
+<div class="honest"><strong>Check your own detail</strong>Be ready to say exactly which part you did in Admin Console (adding users to product profiles) and which part in AEM (groups and ACLs). If one of them was done by another team, say so.</div>
+</div></div></section>
+
+<!-- 9 -->
+<section class="ch band" id="workflow"><div class="wrap chhead"><div class="num">9</div><div class="body">
+<h2>Workflows</h2>
+<p>A workflow automates a process: approval before publish, asset processing, translation. It has a <strong>model</strong> (the design), <strong>launchers</strong> (start automatically on an event) and <strong>instances</strong> (each running copy).</p>
+<table class="stack">
+<thead><tr><th>Piece</th><th>Where it lives</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td>Model (design time)</td><td><code>/conf/global/settings/workflow/models</code> (custom), <code>/libs/settings/workflow/models</code> (Adobe)</td><td>Edited in the model editor; you must click <strong>Sync</strong> to generate the runtime copy.</td></tr>
+<tr><td>Model (runtime)</td><td><code>/var/workflow/models</code></td><td>What instances actually execute.</td></tr>
+<tr><td>Launcher</td><td><code>/conf/global/settings/workflow/launcher</code></td><td>Event type, node type, path glob, condition, run modes.</td></tr>
+<tr><td>Instances</td><td><code>/var/workflow/instances</code></td><td>Need regular purging, or the repository grows and the inbox slows.</td></tr>
+<tr><td>Steps</td><td>Participant step (a person/group decides), process step (Java code), OR/AND splits, publish step</td><td>A process step is an OSGi service implementing <code>WorkflowProcess</code>.</td></tr>
+</tbody></table>
+<h3>Typical workflow problems</h3>
+<ul>
+<li>Instance stuck or "failed": check the instance history and <code>error.log</code> for the step's exception; retry the step from the Failures view.</li>
+<li>Launcher not firing: wrong path glob, node type, run mode, or the launcher is disabled.</li>
+<li>Approver does not see the task: they are not in the participant group, or the inbox filter hides it.</li>
+<li>Too many instances: configure Workflow Purge (scheduled maintenance task). Transient workflows avoid storing history. <span class="b t">Learn as theory</span></li>
+</ul>
+<div class="you"><strong>Your experience: workflow definitions wiped during content ingestion</strong>After a content ingestion, workflows and Manage Publication stopped working. Logs showed a <code>cq:Workflow</code> content violation exception. You traced it to the CSV of paths used for the migration: empty rows caused the ingestion to wipe out workflow definitions. You reverted to the last good version, re-ran the ingestion, verified, and introduced a peer review of the CSV before every ingestion. This connects three subjects: <em>where workflow models live, how ingestion with "wipe" works, and why input validation is a prevention step</em>.</div>
+</div></div></section>
+
+<!-- 10 -->
+<section class="ch band" id="cicd"><div class="wrap chhead"><div class="num">10</div><div class="body">
+<h2>Cloud Manager, Git, Maven and pipelines</h2>
+<p>In AEMaaCS the only way to change code and configuration is a Cloud Manager pipeline. Knowing its stages tells you where a failed deployment broke.</p>
+<figure>
+<svg viewBox="0 0 1100 200" role="img" aria-label="Production pipeline stages: Git source, Maven build and unit tests, code quality scan, image build, deploy to stage, stage tests, approval, deploy to production.">
+<defs><marker id="a4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="currentColor"/></marker></defs>
+<g font-family="Archivo,sans-serif" font-size="13" fill="currentColor">
+<g id="st">
+<rect x="10" y="40" width="112" height="70" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
+</g>
+<use href="#st" x="135"/><use href="#st" x="270"/><use href="#st" x="405"/><use href="#st" x="540"/><use href="#st" x="675"/><use href="#st" x="810"/>
+<rect x="955" y="40" width="130" height="70" rx="4" fill="none" stroke="#e4002b" stroke-width="2.5"/>
+<text x="66" y="70" text-anchor="middle" font-weight="600">Git</text><text x="66" y="90" text-anchor="middle" font-size="12">branch / commit</text>
+<text x="201" y="70" text-anchor="middle" font-weight="600">Build</text><text x="201" y="90" text-anchor="middle" font-size="12">Maven + unit tests</text>
+<text x="336" y="70" text-anchor="middle" font-weight="600">Code quality</text><text x="336" y="90" text-anchor="middle" font-size="12">rules, coverage</text>
+<text x="471" y="70" text-anchor="middle" font-weight="600">Build image</text><text x="471" y="90" text-anchor="middle" font-size="12">code + AEM release</text>
+<text x="606" y="70" text-anchor="middle" font-weight="600">Deploy stage</text><text x="606" y="90" text-anchor="middle" font-size="12">author + publish</text>
+<text x="741" y="70" text-anchor="middle" font-weight="600">Stage tests</text><text x="741" y="90" text-anchor="middle" font-size="12">security, perf, UI</text>
+<text x="876" y="70" text-anchor="middle" font-weight="600">Approval</text><text x="876" y="90" text-anchor="middle" font-size="12">go-live sign-off</text>
+<text x="1020" y="70" text-anchor="middle" font-weight="600">Deploy prod</text><text x="1020" y="90" text-anchor="middle" font-size="12">rolling, no downtime</text>
+<line x1="122" y1="75" x2="143" y2="75" stroke="currentColor" stroke-width="2" marker-end="url(#a4)"/>
+<line x1="257" y1="75" x2="278" y2="75" stroke="currentColor" stroke-width="2" marker-end="url(#a4)"/>
+<line x1="392" y1="75" x2="413" y2="75" stroke="currentColor" stroke-width="2" marker-end="url(#a4)"/>
+<line x1="527" y1="75" x2="548" y2="75" stroke="currentColor" stroke-width="2" marker-end="url(#a4)"/>
+<line x1="662" y1="75" x2="683" y2="75" stroke="currentColor" stroke-width="2" marker-end="url(#a4)"/>
+<line x1="797" y1="75" x2="818" y2="75" stroke="currentColor" stroke-width="2" marker-end="url(#a4)"/>
+<line x1="932" y1="75" x2="953" y2="75" stroke="currentColor" stroke-width="2" marker-end="url(#a4)"/>
+<text x="10" y="150" font-size="13">A failure in Build or Code quality = the customer's code. A failure in Deploy = often packages, Repoinit, or bundle start-up. A failure in Stage tests = security headers, performance, or custom UI tests.</text>
+</g></svg>
+<figcaption>Production pipeline in Cloud Manager. Non-production pipelines deploy to dev environments with fewer gates.</figcaption>
+</figure>
+<table class="stack">
+<thead><tr><th>Pipeline type</th><th>Deploys</th><th>Use when</th></tr></thead>
+<tbody>
+<tr><td>Full-stack</td><td>Java code, packages, OSGi config, dispatcher config</td><td>Any code change</td></tr>
+<tr><td>Web-tier config</td><td>Only dispatcher config</td><td>Fast dispatcher-only changes (minutes, not an hour)</td></tr>
+<tr><td>Front-end</td><td><code>ui.frontend</code> build (CSS/JS) for Site themes</td><td>Front-end teams working separately</td></tr>
+<tr><td>Config pipeline</td><td>YAML for CDN rules, traffic filters, log forwarding, maintenance tasks</td><td>Edge and platform settings <span class="b t">Learn as theory</span></td></tr>
+<tr><td>Code quality only</td><td>Nothing; runs scans</td><td>Check a branch before merging</td></tr>
+</tbody></table>
+<h3>Maven project structure (AEM Project Archetype)</h3>
+<table class="stack">
+<thead><tr><th>Module</th><th>Contains</th></tr></thead>
+<tbody>
+<tr><td><code>core</code></td><td>Java: Sling Models, servlets, OSGi services, workflow steps; built as an OSGi bundle</td></tr>
+<tr><td><code>ui.apps</code></td><td>Components (HTL), clientlib references, <code>/apps</code> content (immutable)</td></tr>
+<tr><td><code>ui.config</code></td><td>OSGi configs per run mode, Repoinit scripts</td></tr>
+<tr><td><code>ui.content</code></td><td>Initial mutable content: templates and policies under <code>/conf</code>, sample pages</td></tr>
+<tr><td><code>ui.frontend</code></td><td>Webpack/npm front-end build, produces clientlibs</td></tr>
+<tr><td><code>dispatcher</code></td><td>Apache and dispatcher config</td></tr>
+<tr><td><code>all</code></td><td>Container package that embeds all others: what Cloud Manager deploys</td></tr>
+</tbody></table>
+<h3>Git in Cloud Manager</h3>
+<p>Cloud Manager builds from its own Adobe-hosted Git repository, or (newer) directly from a linked GitHub/GitLab/Bitbucket repository. Many enterprises keep code in their own Git and <strong>sync</strong> to the Adobe repository, often with a CI tool. Pipeline triggers can be <strong>manual</strong> or <strong>on Git changes</strong>.</p>
+<div class="you"><strong>Your experience</strong>You created pipelines for RDE, QA and STAGE environments and worked with Adobe's pipelines; you also fixed dev pipelines that triggered several times. The cause: commits synced into the destination (Adobe) repository were treated as new commits, which started the pipeline automatically, on top of the run started from the source side. Before the interview, write down in one line exactly what you changed (for example switching the trigger to manual, or limiting which branch or job triggers). Your Jenkins, Git and Maven background explains how the build works under the hood.</div>
+<div class="honest"><strong>RDE detail to know</strong>Rapid Development Environments are normally deployed with the Adobe I/O CLI (<code>aio aem:rde:install</code>), not a standard Cloud Manager pipeline, so changes appear in seconds. If your "RDE pipeline" was a Jenkins or other CI job calling the aio CLI, describe it that way.</div>
+<h3>Common deployment failures to recognise <span class="b p">Close to your work</span></h3>
+<ul>
+<li>Build failure: compile error, unit test failure, dependency not found (wrong repository or version).</li>
+<li>Code quality gate: critical issues (e.g. using admin session, unclosed resource resolvers) block; important issues need override.</li>
+<li>Deploy failure: package filter overlaps, mutable content in immutable package, invalid Repoinit statement, bundle does not start.</li>
+<li>Dispatcher validator: forbidden directive or file outside allowed folders.</li>
+<li>Stage performance or security test failure (e.g. missing security headers).</li>
+</ul>
+</div></div></section>
+
+<!-- 11 -->
+<section class="ch band" id="migration"><div class="wrap chhead"><div class="num">11</div><div class="body">
+<h2>Content migration from on-premise to the cloud</h2>
+<figure>
+<svg viewBox="0 0 1100 230" role="img" aria-label="Migration flow: Best Practices Analyzer on the source, Content Transfer Tool extraction into a migration set in cloud storage, ingestion into the target cloud author or publish with wipe or merge, then top-up runs; Cloud Acceleration Manager tracks everything.">
+<defs><marker id="a5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="currentColor"/></marker></defs>
+<g font-family="Archivo,sans-serif" font-size="13" fill="currentColor">
+<rect x="10" y="20" width="1080" height="40" rx="4" fill="none" stroke="#e4002b" stroke-width="2.5"/>
+<text x="550" y="45" text-anchor="middle" font-weight="600">Cloud Acceleration Manager (CAM): plan, create migration sets, run and watch ingestions</text>
+<rect x="10" y="100" width="190" height="80" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
+<text x="105" y="130" text-anchor="middle" font-weight="600">Source AEM 6.x</text><text x="105" y="150" text-anchor="middle" font-size="12">Best Practices Analyzer</text><text x="105" y="166" text-anchor="middle" font-size="12">report of what to change</text>
+<rect x="260" y="100" width="190" height="80" rx="4" fill="none" stroke="#e4002b" stroke-width="2.5"/>
+<text x="355" y="130" text-anchor="middle" font-weight="600">Extraction</text><text x="355" y="150" text-anchor="middle" font-size="12">Content Transfer Tool</text><text x="355" y="166" text-anchor="middle" font-size="12">paths from list / CSV</text>
+<rect x="510" y="100" width="190" height="80" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
+<text x="605" y="130" text-anchor="middle" font-weight="600">Migration set</text><text x="605" y="150" text-anchor="middle" font-size="12">stored in cloud storage</text>
+<rect x="760" y="100" width="150" height="80" rx="4" fill="none" stroke="#e4002b" stroke-width="2.5"/>
+<text x="835" y="130" text-anchor="middle" font-weight="600">Ingestion</text><text x="835" y="150" text-anchor="middle" font-size="12">wipe or merge</text>
+<rect x="960" y="100" width="130" height="80" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
+<text x="1025" y="130" text-anchor="middle" font-weight="600">Target cloud</text><text x="1025" y="150" text-anchor="middle" font-size="12">author / publish</text>
+<line x1="200" y1="140" x2="257" y2="140" stroke="currentColor" stroke-width="2" marker-end="url(#a5)"/>
+<line x1="450" y1="140" x2="507" y2="140" stroke="currentColor" stroke-width="2" marker-end="url(#a5)"/>
+<line x1="700" y1="140" x2="757" y2="140" stroke="currentColor" stroke-width="2" marker-end="url(#a5)"/>
+<line x1="910" y1="140" x2="957" y2="140" stroke="currentColor" stroke-width="2" marker-end="url(#a5)"/>
+<text x="10" y="215" font-size="13">Then: top-up extractions/ingestions (changes only), content freeze, final top-up, go-live. Code is migrated separately through Git and pipelines.</text>
+</g></svg>
+<figcaption>Red: steps you ran yourself on the migration.</figcaption>
+</figure>
+<table class="stack">
+<thead><tr><th>Concept</th><th>Meaning</th><th>Risk</th></tr></thead>
+<tbody>
+<tr><td>Migration set</td><td>A named bundle of paths to move, created in CAM</td><td>Wrong or empty path entries move the wrong content</td></tr>
+<tr><td>Wipe ingestion</td><td>Clears existing content in the target before loading</td><td>Deletes anything in the target not in the set, including things created directly in the cloud</td></tr>
+<tr><td>Non-wipe (merge) ingestion / top-up</td><td>Adds and updates on top of existing content</td><td>Conflicts if the same item was edited in both places</td></tr>
+<tr><td>Versions</td><td>Can be included; increases size and time</td><td>Long extraction times</td></tr>
+<tr><td>Users and groups</td><td>Groups referenced by ACLs move with content; users come from IMS</td><td>Users must log in via IMS; mapping by email</td></tr>
+<tr><td>Index and size checks</td><td>CAM shows content size, index and ingestion logs</td><td>Ingestion can fail if the target is busy or content is invalid</td></tr>
+</tbody></table>
+<div class="you"><strong>Your experience</strong>You migrated content from on-premise to the cloud with the Content Transfer Tool by creating migration sets in Cloud Acceleration Manager, solved namespace errors with Repoinit, and recovered from an ingestion that removed workflow definitions because of empty rows in the path CSV. You can explain migration as someone who has seen it fail, which is exactly what support cases look like.</div>
+</div></div></section>
+
+<!-- 12 -->
+<section class="ch band" id="code"><div class="wrap chhead"><div class="num">12</div><div class="body">
+<h2>Components, templates and forms</h2>
+<h3>Core Components and versioning</h3>
+<p>Adobe's <strong>Core Components</strong> (Page, Title, Text, Image, List, Teaser, Container, Form...) are production-ready building blocks. Projects use <strong>proxy components</strong>: a component in <code>/apps/&lt;project&gt;</code> with <code>sling:resourceSuperType</code> pointing at a specific core version, e.g. <code>core/wcm/components/list/v4/list</code>. Upgrading from v3 to v4 means changing that super type and checking that dialogs, HTL and CSS still work.</p>
+<h3>Delegation pattern</h3>
+<p>To change one value without copying the whole core component, a custom Sling Model implements the same interface and delegates everything else to the core model (<code>@Self @Via(type = ResourceSuperType.class)</code>). Only the changed method has new logic.</p>
+<div class="you"><strong>Your experience: List component "Display as Teaser"</strong>Selecting "Display as Teaser" in the List did not work as expected. You updated the <strong>teaser delegate</strong> property (the List's policy/property that names which Teaser component renders each item) and upgraded the List from v3 to v4. The concepts: proxy components, versioned core components, and policies that configure a component per template.</div>
+<h3>Editable templates and policies</h3>
+<ul>
+<li>Templates live in <code>/conf/&lt;site&gt;/settings/wcm/templates</code>; authors with template-author rights edit them.</li>
+<li><strong>Structure</strong> (locked parts), <strong>initial content</strong>, <strong>layout</strong> (responsive grid), <strong>policies</strong> (allowed components, styles, default settings per container).</li>
+<li>Style System lets authors pick CSS classes defined in a policy.</li>
+</ul>
+<h3>Client libraries</h3>
+<p>Folders of CSS/JS with <code>categories</code>; pages include them by category. On publish, they are served through <code>/etc.clientlibs/</code> (a proxy path), so dispatcher filters must allow <code>/etc.clientlibs/*</code>. A page without styling on publish but fine on author: suspect a filter blocking <code>/etc.clientlibs</code> or a missing <code>allowProxy</code> flag.</p>
+<h3>Forms</h3>
+<div class="you"><strong>Your experience: country site form</strong>You built a form using the core <strong>Form Container</strong> for one country site: users fill details and receive an email on submission, and business users receive the submission as BCC, configured in the form container. The container's <strong>Mail</strong> action sends the content to "mailto", "cc" and "bcc" addresses with a subject; it relies on the mail service (chapter 4) working.</div>
+<div class="honest"><strong>Theory to add</strong>AEM Forms (Adaptive Forms) is a separate, larger product: form data models, submit actions to REST/Workfront/email, document of record. Know the difference: Core Form Container (simple Sites forms) vs Adaptive Forms (AEM Forms add-on). Also: storing form submissions on publish is discouraged in the cloud because publish pods are replaced; send them to an external system instead.</div>
+</div></div></section>
+
+<!-- 13 -->
+<section class="ch band" id="logs"><div class="wrap chhead"><div class="num">13</div><div class="body">
+<h2>Logs: the evidence</h2>
+<table class="stack">
+<thead><tr><th>Log</th><th>Tier</th><th>Shows</th><th>Use it for</th></tr></thead>
+<tbody>
+<tr><td><code>aemerror</code> (error.log)</td><td>Author, Publish</td><td>Java exceptions, warnings, info by logger</td><td>500s, failing workflows, bundles, ingestion errors</td></tr>
+<tr><td><code>aemrequest</code> (request.log)</td><td>Author, Publish</td><td>Each request in and its response time</td><td>Slow requests, which URL caused a status</td></tr>
+<tr><td><code>aemaccess</code> (access.log)</td><td>Author, Publish</td><td>Requests with user, status, size</td><td>Who did what, 401/403 by user</td></tr>
+<tr><td><code>httpdaccess</code></td><td>Dispatcher</td><td>Every request reaching Apache</td><td>Was the request even seen? Status at Apache</td></tr>
+<tr><td><code>httpderror</code></td><td>Dispatcher</td><td>Apache errors</td><td>Rewrite problems, config errors</td></tr>
+<tr><td><code>aemdispatcher</code></td><td>Dispatcher</td><td>Filter decisions, cache hits/misses, backend calls</td><td>"Filter rejects", cache behaviour</td></tr>
+<tr><td>CDN log</td><td>CDN</td><td>Edge requests, client IP, cache status, blocks</td><td>403 by allowlist/traffic rule, geography</td></tr>
+</tbody></table>
+<p><strong>How to get them</strong>: Cloud Manager → Environments → Download logs (per day, per service), or tail them live with the Adobe I/O CLI (<code>aio cloudmanager:tail-log</code>). Customers can forward them to Splunk or similar. Log levels are raised with an OSGi config (<code>org.apache.sling.commons.log.LogManager.factory.config~name.cfg.json</code>) deployed through the pipeline, usually only for one package and only for a short time in prod.</p>
+<h3>Reading an error</h3>
+<pre><code>25.11.2026 10:14:02.311 *ERROR* [10.0.0.4 [1732529642] GET /content/mysite/xx/home.html HTTP/1.1]
+  com.day.cq.wcm.core.impl.... Error during include of component
+  org.apache.sling.api.scripting.ScriptEvaluationException: ...
+Caused by: java.lang.NullPointerException
+  at com.example.mysite.core.models.HeroModel.init(HeroModel.java:42)</code></pre>
+<p class="small">Illustrative log; not from your environment.</p>
+<ol class="steps">
+<li>Time and thread name give the URL and method that failed.</li>
+<li>The first line names the area (component include).</li>
+<li>Read down to the last <strong>Caused by</strong>: that is the real cause.</li>
+<li>The first frame in the customer's package (<code>com.example...</code>) shows whose code to fix; frames only in <code>com.day</code> / <code>org.apache</code> may point to a product issue.</li>
+<li>Find the same request in request.log to see status and duration.</li>
+</ol>
+<h3>Deeper JVM evidence <span class="b t">Learn as theory</span></h3>
+<ul>
+<li><strong>Thread dump</strong>: snapshot of all threads; several taken a few seconds apart show what a slow or hung instance is waiting on (locks, slow queries, external calls).</li>
+<li><strong>Heap dump</strong>: memory snapshot for OutOfMemoryError analysis (tools such as Eclipse MAT).</li>
+<li><strong>GC logs</strong>: long garbage-collection pauses cause slowness and timeouts.</li>
+<li>In the cloud, Adobe engineering collects these; a TSE requests them internally rather than the customer.</li>
+</ul>
+</div></div></section>
+
+<!-- 14 -->
+<section class="ch band" id="http"><div class="wrap chhead"><div class="num">14</div><div class="body">
+<h2>HTTP errors: which stop produced it?</h2>
+<p>The status code alone is not enough. Ask <strong>which layer created the response</strong>. Every layer can return 403, 404 or 503 for different reasons.</p>
+<table class="stack">
+<thead><tr><th>Code</th><th>Meaning</th><th>Likely at CDN</th><th>Likely at Dispatcher</th><th>Likely at AEM</th><th>Your case</th></tr></thead>
+<tbody>
+<tr><td>301 / 302</td><td>Redirect</td><td>Edge redirect rules</td><td>Rewrite rules, http→https, trailing slash</td><td>Vanity URL, redirect component, login redirect</td><td></td></tr>
+<tr><td>304</td><td>Not modified</td><td>Revalidation</td><td>Cache with ETag/Last-Modified</td><td></td><td></td></tr>
+<tr><td>400</td><td>Bad request</td><td>Malformed headers, header too large</td><td>Bad URL encoding</td><td>Invalid parameters to a servlet</td><td></td></tr>
+<tr><td>401</td><td>Not logged in</td><td></td><td></td><td>Author without login; protected content; expired token</td><td></td></tr>
+<tr><td>403</td><td>Forbidden</td><td><strong>IP allowlist</strong>, traffic filter, WAF</td><td>Rare; some deny configs</td><td>No privilege for the action (e.g. replicate, modify), CSRF token missing on POST</td><td>Regional authors: IP allowlist</td></tr>
+<tr><td>404</td><td>Not found</td><td>Wrong origin/domain mapping</td><td><strong>Filter denied</strong>, rewrite to wrong path</td><td>Not published, wrong path, <em>no read permission</em></td><td>.JPG / .xlsx: filter</td></tr>
+<tr><td>405</td><td>Method not allowed</td><td></td><td>Filter allows GET but not POST</td><td>No servlet for that method</td><td></td></tr>
+<tr><td>500</td><td>Server error</td><td></td><td></td><td>Exception in component, model or servlet</td><td></td></tr>
+<tr><td>502</td><td>Bad gateway</td><td>Origin returned invalid response</td><td>Publish unreachable/restarting</td><td></td><td></td></tr>
+<tr><td>503</td><td>Unavailable</td><td>Origin timeout</td><td>No healthy backend, render timeout</td><td>Overloaded, very slow render</td><td>Regional site: heavy page</td></tr>
+<tr><td>504</td><td>Gateway timeout</td><td>Origin too slow</td><td>Backend timeout</td><td>Long-running request</td><td></td></tr>
+</tbody></table>
+<h3>Isolation technique</h3>
+<ol class="steps">
+<li>Reproduce with <code>curl -v</code> or browser dev tools; note status, headers (<code>Age</code>, <code>X-Cache</code>, <code>Cache-Control</code>), time.</li>
+<li>Compare the custom domain with the environment's default URL (<code>publish-p&lt;program&gt;-e&lt;env&gt;.adobeaemcloud.com</code>): if only the custom domain fails, look at DNS, SSL, domain mapping or vhost.</li>
+<li>Compare author vs publish vs preview: content or permission vs delivery.</li>
+<li>Add a cache-busting query string (<code>?nocache=1</code>): if it works, the cached copy is the problem.</li>
+<li>Check the same request in CDN log → dispatcher log → AEM request/error log; the first layer that shows the error status, with nothing behind it, is where it was produced.</li>
+</ol>
+</div></div></section>
+
+<!-- 15 -->
+<section class="ch band" id="perf"><div class="wrap chhead"><div class="num">15</div><div class="body">
+<h2>Performance</h2>
+<p>A fast AEM site serves almost everything from cache. Performance problems usually come from (1) poor cache hit ratio, (2) a page that is expensive to render, (3) slow repository queries, or (4) slow external calls.</p>
+<div class="grid2">
+<div class="card"><h4>Cache hit ratio</h4><p>Check CDN and dispatcher cache status. Query strings, personalised headers, <code>no-cache</code> headers and too-wide invalidation (low <code>statfileslevel</code>) all reduce hits.</p></div>
+<div class="card"><h4>Render cost</h4><p>Many nested containers and components, heavy Sling Models, many includes. Each component is a separate include with its own processing.</p></div>
+<div class="card"><h4>Queries and indexes</h4><p>A query without a matching Oak index <strong>traverses</strong> the repository; logs warn "Traversed N nodes". Fix with a custom index (deployed via pipeline, named like <code>damAssetLucene-8-custom-1</code>) or rewrite the query. Use Query Explain in Developer Console. <span class="b t">Learn as theory</span></p></div>
+<div class="card"><h4>External calls</h4><p>HTTP calls inside components without timeouts or caching block render threads; under load this becomes 503/504.</p></div>
+</div>
+<div class="you"><strong>Your experience: a regional team 503 after publishing a page</strong>You checked logs and confirmed the page was published, then saw in publish that it was not loading, with far more calls than expected. The page used an excessive number of containers. You removed unnecessary containers, re-authored the page with proper styling and republished, then gave authors guidance to use the minimum number of containers. The concepts: render cost per component, request timeouts producing 503, and prevention through authoring guidelines (template policies can also limit allowed components).</div>
+</div></div></section>
+
+<!-- 16 -->
+<section class="ch band" id="method"><div class="wrap chhead"><div class="num">16</div><div class="body">
+<h2>The troubleshooting method</h2>
+<p>Use the same seven steps for every case. Your task log already follows them; naming them makes your explanations sound structured.</p>
+<ol class="steps">
+<li><strong>Scope</strong>: which environment, tier, URL, users, since when, what changed (deployment, publish, DNS, certificate, migration)?</li>
+<li><strong>Impact</strong>: production down, part of users, one page? Sets priority and how often you update the customer.</li>
+<li><strong>Reproduce</strong>: same request yourself; author vs publish vs preview; custom domain vs default domain.</li>
+<li><strong>Isolate the layer</strong>: walk the route map from the outside in: client → DNS → CDN → Dispatcher → Publish → code/content → repository.</li>
+<li><strong>Evidence</strong>: logs for that time and URL, headers, configs in Git, pipeline history, Admin Console.</li>
+<li><strong>Fix or workaround</strong>: smallest safe change first; rollback is a valid fix (you reverted after the ingestion issue). Verify with the affected users.</li>
+<li><strong>Root cause and prevention</strong>: why it happened, why it was not caught, what stops it happening again (validation, review, monitoring, documentation).</li>
+</ol>
+<h3>Communicating like a TSE</h3>
+<ul>
+<li>First reply: acknowledge, restate the problem, say what you need (URL, time, request ID, screenshots, recent changes).</li>
+<li>Updates: what you checked, what you found, what is next, when you will update.</li>
+<li>Explain the cause in the customer's terms, then the technical detail.</li>
+<li>Be clear when the fix belongs to the customer (their dispatcher config, their code) and when it is an Adobe issue to escalate with complete evidence.</li>
+</ul>
+</div></div></section>
+
+<!-- Summary -->
+<section class="ch band" id="summary"><div class="wrap">
+<h2>Visual summary: your work on the route map</h2>
+<p class="lede">Each of your tasks, placed at the layers it touched. Filled dot: the main layer. Ring: also involved.</p>
+<div class="scroll">
+<table class="mat">
+<thead><tr><th>Your task</th><th>DNS / CDN</th><th>Dispatcher</th><th>Publish / Preview</th><th>Author</th><th>Repository</th><th>IMS / access</th><th>Cloud Manager / Git</th></tr></thead>
+<tbody id="mat"></tbody>
+</table>
+</div>
+
+<h2 style="margin-top:48px">Concepts to remember</h2>
+<div class="grid2" style="margin-top:16px">
+<div class="card"><h4>Layers first</h4><p>Every case: which stop produced the response? CDN, Dispatcher, Publish, Author, repository, code, IMS.</p></div>
+<div class="card"><h4>Dispatcher denies with 404</h4><p>Filters are case-sensitive regex; later rules win. Proving content exists on publish points the fault at dispatcher.</p></div>
+<div class="card"><h4>IP allowlist denies with 403</h4><p>At the CDN, before AEM. CIDR /24 = 256 addresses, /32 = one.</p></div>
+<div class="card"><h4>Two layers of access</h4><p>Admin Console product profiles decide login; AEM groups and ACLs decide actions. Grant to groups.</p></div>
+<div class="card"><h4>Code is immutable at runtime</h4><p><code>/apps</code>, <code>/libs</code>, indexes, service users and namespaces come from the pipeline (Repoinit for structure).</p></div>
+<div class="card"><h4>Two caches</h4><p>Dispatcher is invalidated on publish; the CDN expires by TTL. Old content after publish is usually CDN TTL.</p></div>
+<div class="card"><h4>Sling resolution</h4><p>Path → resource → resourceType → script, with selectors, extension, suffix. Unreadable looks like not found.</p></div>
+<div class="card"><h4>Config by run mode and variables</h4><p><code>config.author.prod</code>; <code>$[env:...]</code> and <code>$[secret:...]</code> from Cloud Manager; secrets never in Git.</p></div>
+<div class="card"><h4>Migration wipe risk</h4><p>Wipe ingestion clears the target; validate path lists; top-ups merge.</p></div>
+</div>
+
+<h2 style="margin-top:48px">Common scenarios and how to approach them</h2>
+<table class="stack">
+<thead><tr><th>Symptom</th><th>First checks</th><th>Usual causes</th></tr></thead>
+<tbody>
+<tr><td>Published but site shows old content</td><td>Check publish directly via default domain; headers <code>Age</code>, <code>Cache-Control</code>; add query string</td><td>CDN TTL, dispatcher invalidation scope, publish failed silently, browser cache</td></tr>
+<tr><td>Page fine on author, unstyled on publish</td><td>Browser network tab for <code>/etc.clientlibs</code> requests</td><td>Filter blocks clientlibs, <code>allowProxy</code> missing, minification error</td></tr>
+<tr><td>One user group gets 403</td><td>Compare with a working user: IP, product profile, group membership</td><td>IP allowlist, missing product profile, ACL deny</td></tr>
+<tr><td>Assets 404 on live only</td><td>Exists on author? on publish? exact extension and path</td><td>Not published, filter extension list, case, rewrite</td></tr>
+<tr><td>Pipeline fails at deploy</td><td>Pipeline step log, download build log, error near package install</td><td>Package type mismatch, Repoinit syntax, bundle not starting</td></tr>
+<tr><td>Emails stopped</td><td>error.log for mail exceptions; when did it start; config values</td><td>Token/password expired, networking/port forwarding, sender rejected</td></tr>
+<tr><td>Publishing stuck</td><td>Distribution queue on author, error.log</td><td>Blocked item, invalid content, permission, platform issue to escalate</td></tr>
+<tr><td>Site slow or 503 on one page</td><td>request.log durations, error.log warnings, page structure</td><td>Heavy page, traversal queries, external calls, low cache hit ratio</td></tr>
+<tr><td>Custom domain not working</td><td>DNS lookup, certificate covers the name, domain mapped to env, vhost</td><td>CNAME missing, wrong cert, mapping, vhost ServerAlias</td></tr>
+<tr><td>Workflow not starting</td><td>Launcher config, model synced, instance list</td><td>Glob/node type/run mode, model not synced, permissions</td></tr>
+</tbody></table>
+</div></section>
+
+<section class="ch band" id="revision"><div class="wrap">
+<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between">
+<h2>Short revision sheet</h2>
+<button class="copy" id="cp" type="button">Copy revision sheet</button>
+</div>
+<ul class="rev" id="revlist">
+<li>Route: Browser → DNS → CDN (Fastly) → Dispatcher (Apache) → Publish; Author → Preview/Publish via Content Distribution.</li>
+<li>Stack: JVM → Oak/JCR → OSGi (Felix) → Sling → AEM apps → your code.</li>
+<li>Paths: /libs Adobe, /apps code, /conf templates & workflow models, /content pages & DAM, /var runtime, /home users.</li>
+<li>Cloud: /apps and /libs immutable; changes only via Cloud Manager pipelines.</li>
+<li>Repoinit: service users, paths, ACLs, namespaces as code.</li>
+<li>URL: path . selectors . extension / suffix ? query.</li>
+<li>Sling: resource → sling:resourceType → script; falls back to resourceSuperType.</li>
+<li>OSGi configs per run mode: config.author.prod; $[env:X] and $[secret:X].</li>
+<li>Dispatcher: vhost → rewrite → filter → cache → publish; filter deny = 404; regex is case-sensitive.</li>
+<li>Invalidation via .stat files and statfileslevel; automatic on publish in cloud.</li>
+<li>CDN: honours Cache-Control/Surrogate-Control; short default TTL; IP allowlist block = 403.</li>
+<li>Go-live: certificate → domain + TXT verify → mapping → CNAME to cdn.adobeaemcloud.com → vhost.</li>
+<li>Access: Admin Console product profiles (login) + AEM groups/ACLs (actions); user beats group at same node.</li>
+<li>Workflow: model in /conf, runtime in /var/workflow/models (Sync!), launchers, purge instances.</li>
+<li>Pipelines: full-stack, web-tier config, front-end, config; prod = build, quality, stage, tests, approval, prod.</li>
+<li>Modules: core, ui.apps, ui.config, ui.content, ui.frontend, dispatcher, all.</li>
+<li>RDE: deploy with aio CLI in seconds.</li>
+<li>Migration: BPA → CTT extraction → migration set (CAM) → ingestion (wipe/merge) → top-ups.</li>
+<li>Logs: aemerror, aemrequest, aemaccess, httpdaccess, httpderror, aemdispatcher, CDN; download or tail via aio.</li>
+<li>Read errors from the last "Caused by"; match request.log for status and time.</li>
+<li>Traversal warnings → missing Oak index; custom index name ends -custom-N.</li>
+<li>Method: scope, impact, reproduce, isolate, evidence, fix, root cause and prevention.</li>
+</ul>
+</div></section>
+
+<section class="ch band" id="next"><div class="wrap">
+<h2>Study next</h2>
+<table class="stack">
+<thead><tr><th>Topic</th><th>Why it matters for TSE</th><th>Builds on</th></tr></thead>
+<tbody>
+<tr><td>Dispatcher SDK hands-on</td><td>Reproduce filter, rewrite and cache cases locally; most common case type</td><td>Chapter 5, your dispatcher work</td></tr>
+<tr><td>AEM SDK local setup</td><td>Reproduce customer issues; read error.log locally</td><td>Chapters 4, 13</td></tr>
+<tr><td>Oak indexing and queries</td><td>Performance and search cases; Query Explain</td><td>Chapter 15</td></tr>
+<tr><td>AEM Assets in the cloud</td><td>Asset microservices, processing profiles, Dynamic Media; frequent cases</td><td>Chapter 2</td></tr>
+<tr><td>CDN config pipeline</td><td>Traffic filter rules, WAF, edge redirects, BYOCDN headers</td><td>Chapter 6</td></tr>
+<tr><td>Advanced networking</td><td>Egress IP, port forwarding, VPN; email and integration cases</td><td>Your SMTP case</td></tr>
+<tr><td>Sling Models and HTL in depth</td><td>Read customer code in stack traces</td><td>Chapter 12, your component work</td></tr>
+<tr><td>JVM diagnostics</td><td>Thread dumps, heap, GC for hung or slow instances</td><td>Chapter 13</td></tr>
+<tr><td>Edge Delivery Services</td><td>Adobe's newer delivery model, increasingly in cases</td><td>Chapters 2, 6</td></tr>
+<tr><td>Adobe support process</td><td>Case priorities, escalation, communication</td><td>Chapter 1</td></tr>
+</tbody></table>
+</div></section>
+
+</main>
+<footer class="band"><div class="wrap small">Built from your task log (17 items) and the background you described. Anything marked "Learn as theory" is not in that record; confirm details of your own tasks before the interview.</div></footer>
+
+<script>
+{
+const C=['cdn','disp','pub','auth','repo','ims','cm'];
+const rows=[
+['List component teaser delegate, v3 to v4',{pub:'o',auth:'f',cm:'o'}],
+['Preview-to-publish workflow',{pub:'o',auth:'f'}],
+['Country-site form with email and BCC',{pub:'f',auth:'o'}],
+['Namespaces via Repoinit across RDE/QA/STAGE/PROD',{repo:'f',cm:'o'}],
+['SMTP token expiry fixed',{auth:'o',pub:'f'}],
+['Users and groups for country authors and approvers',{ims:'f',auth:'o'}],
+['Preview links: dispatcher rule appending .html',{disp:'f',pub:'o'}],
+['Pipelines for RDE, QA, STAGE',{cm:'f'}],
+['SSL certificates and IP allowlisting with CIDR',{cdn:'f',cm:'o'}],
+['DNS records to Adobe CDN, domain mapping',{cdn:'f',cm:'o'}],
+['Dispatcher config for domain mapping',{disp:'f'}],
+['Content Transfer Tool migration via CAM',{auth:'o',repo:'f'}],
+['Ingestion wiped workflow definitions: revert and re-ingest',{repo:'f',auth:'o'}],
+['Regional authors 403: IP allowlist',{cdn:'f',ims:'o',auth:'o'}],
+['.JPG / .xlsx 404: dispatcher filter',{disp:'f',pub:'o'}],
+['Heavy-page 503: too many containers',{pub:'f',auth:'o'}],
+['Pipelines triggering several times',{cm:'f'}]
+];
+const lab=['DNS / CDN','Dispatcher','Publish / Preview','Author','Repository','IMS / access','Cloud Manager / Git'];
+document.getElementById('mat').innerHTML=rows.map(r=>'<tr><td>'+r[0]+'</td>'+C.map((c,i)=>{const v=r[1][c];return '<td aria-label="'+lab[i]+(v?(v==='f'?': main':': involved'):': no')+'">'+(v?'<span class="dot'+(v==='o'?' o':'')+'"></span>':'')+'</td>'}).join('')+'</tr>').join('');
+const b=document.getElementById('cp');
+b.addEventListener('click',async()=>{const t=[...document.querySelectorAll('#revlist li')].map(l=>'- '+l.textContent).join('\n');try{await navigator.clipboard.writeText(t);b.textContent='Copied'}catch(e){b.textContent='Copy not allowed here'}setTimeout(()=>b.textContent='Copy revision sheet',2000)});
+}
+</script>
+</body>
+</html>
